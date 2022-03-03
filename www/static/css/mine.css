@@ -1,0 +1,164 @@
+.mine-header{
+    height: 200px;
+    background-image: url("../images/my_info_tp.png");
+    background-repeat: repeat-x;
+    position: relative;
+    text-align: center;
+}
+.header-left{
+    width: 203px;
+    height: 203px;
+    background-image: url("../images/f_cat.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+}
+.header-right p{
+    color: #fff;
+    margin-bottom: 0;
+    font-size: 24px;
+}
+.header-right p:first-child{
+    height: 200px;
+    line-height: 200px;
+    font-size: 40px;
+}
+.mine-body {
+    padding-left: 100px;
+}
+.body-left{
+    width: 195px;
+    float: left;
+    background: white;
+    margin-bottom: 68px;
+    margin-top: 150px;
+}
+.my-info-left .all-two-classify {
+    width: 158px;
+    height: 34px;
+    line-height: 34px;
+    padding-left: 34px;
+    background: #f5f5f5;
+    border-left: 3px solid #004098;
+    position: relative;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+.my-info-left ul {
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+.my-info-left ul>li {
+    line-height: 30px;
+}
+.my-info-left ul>li>a {
+    display: block;
+    width: 120px;
+    padding-left: 34px;
+    font-size: 14px;
+    color: #959595;
+    position: relative;
+}
+.body-right{
+    margin-top: 50px;
+    margin-left: 300px;
+    margin-right: 50px;
+}
+.order_block{
+    border: 1px solid #aaa;
+    background-color: #eee;
+}
+.order-header{
+    height: 50px;
+    line-height: 50px;
+    padding: 0 50px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.time{
+    width: 150px;
+}
+.ordernum{
+    width: 370px;
+}
+.del{
+    display: block;
+    float: right;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-image: url(../images/del.png);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.del a{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.order-body{
+    min-height: 150px;
+}
+td{
+    padding: 0 10px;
+}
+thead td{
+    text-align: center;
+}
+td.del{
+    text-align: right;
+}
+tbody td{
+    background-color: #fff;
+    height:150px;
+    padding: 20px;
+}
+.total{
+    vertical-align: top;
+    font-size: 20px;
+    font-weight: bold;
+}
+.totalnum,.price{
+    font-size: 16px;
+    font-weight:bold;
+}
+.credits_block td img{
+    /*float: left;*/
+    /*width: 50%;*/
+}
+.credits_block thead td{
+    background-color: #eee;
+}
+.credits_block td>div{
+    float: left;
+}
+td.source{
+    width: 60%;
+    background-color: #eee;
+}
+td.change{
+    width: 15%;
+    text-align: center;
+    font-size: 26px;
+    color: orangered;
+}
+td.time{
+    width: 25%;
+    text-align: center;
+}
+.credits_block table{
+    border: 1px solid #aaa;
+}
+.imgdiv{
+    width: 26%;
+}
+.pdiv{
+    width: 74%;
+    line-height: 25px;
+}
+.my-info-left li.active a{
+    color: blue;
+    font-size: 20px;
+}

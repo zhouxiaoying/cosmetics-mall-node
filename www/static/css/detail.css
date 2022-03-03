@@ -1,0 +1,70 @@
+.detail{
+    width: 1170px;
+    margin: 0 auto;
+}
+.detail_body{
+    padding: 50px;
+}
+.left,
+.right{
+    float: left;
+}
+.right{
+    margin-left: 20px;
+}
+.left img{
+    width: 350px;
+    height: 420px;
+}
+.right .top .first{
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid blue;
+    width: 105px;
+    padding: 0 20px;
+    letter-spacing: 3px;
+    font-size: 18px;
+    font-weight: bold;
+    color: blue;
+}
+.right .top .second{
+    height: 80px;
+    line-height: 80px;
+    font-size: 36px;
+    letter-spacing: 5px;
+    border-bottom: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.right .top .third{
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    color: #aaa;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tlabel,.tcontent{
+    width: 50%;
+    float: left;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+}
+.bottom_btn{
+    margin-top: 20px;
+    text-align: center;
+}
+.bottom_btn a{
+    text-decoration: none;
+    display: block;
+    height: 50px;
+    line-height: 50px;
+    width: 200px;
+    font-size: 20px;
+    background-color: #004098;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 4px;
+    text-align: center;
+}

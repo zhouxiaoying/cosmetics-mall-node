@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.SuperSlide.2.1.3.js"></script>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/mine.css">
+</head>
+<body >
+<div id="header"></div>
+
+<div class="mine">
+    <div class="mine-header clearfix">
+        <div class="header-left"></div>
+        <div class="header-right">
+            <p id="integral_show">剩余积分：</p>
+        </div>
+    </div>
+    <div class="mine-body clearfix">
+        <div class="body-left">
+            <div class="my-info-left">
+                <div class="all-two-classify">我的订单</div>
+                <ul class="js-chosen-classify">
+                    <li class="active" onclick="changeOrder('all',this)"><a href="javascript:;" title="全部">全部</a></li>
+                    <li onclick="changeOrder('to',this)"><a href="javascript:;" title="待发货">待发货</a></li>
+                    <li onclick="changeOrder('confirm',this)"><a href="javascript:;" title="待确认">待确认</a></li>
+                    <li onclick="changeOrder('finish',this)"><a href="javascript:;" title="已完成">已完成</a></li>
+                </ul>
+                <div class="all-two-classify">我的积分</div>
+                <ul class="js-chosen-classify">
+                    <li onclick="changeCredits('pay',this)" id="pay_credit"><a href="javascript:;" title="积分兑换">积分支出</a></li>
+                    <li onclick="changeCredits('list',this)"><a href="javascript:;" title="积分明细">积分明细</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="body-right">
+            <div class="order" id="order_show">
+                 <% for(var i=0;i<rows.length;i++){ %>
+                    <div class="order_block">
+                        <table style="width: 100%">
+                            <thead class="order-header">
+                                <tr>
+                                    <td  class="time"> <%=rows[i].createTime%></td>
+                                    <td class="ordernum"> 订单号: <%=rows[i].orderNo%></td>
+                                    <td colspan="3" >
+                                     <%if(rows[i].status == '1'){%>
+                                        <a href="javascript:;" onclick="confirmOrder('<%=rows[i].id%>')">确认收货</a>
+                                     <%}%>
+                                    <a href="javascript:;" class="del" onclick="deleteOrder('<%=rows[i].id%>')"></a></td>
+                                </tr>
+                            </thead>
+                            <tbody class="order-body">
+                                <% for(var j=0;j<rows[i].goods.length;j++){ %>
+                                    <tr>
+                                        <td>
+                                            <img src="<%=rows[i].goods[j].path%>" alt="" style="width:100px;height:100px;">
+                                        </td>
+                                        <td>
+                                            <%=rows[i].goods[j].name%>
+                                        </td>
+                                        <td class="price">￥<%=rows[i].goods[j].price%></td>
+                                        <td class="totalnum"><%=rows[i].goods[j].amount%></td>
+                                        <% if(j == 0){%>
+                                            <td rowspan="<%=rows[i].goods.length%>" class="total" style="">￥<%=rows[i].totalPrice%></td>
+                                        <%}%>
+                                    </tr>
+                                <%}%>
+                            </tbody>
+                        </table>
+                    </div>
+                 <%}%>
+            </div>
+            <div class="credits hide">
+                <div class="credits_block">
+                    <table style="width: 100%">
+                        <thead class="order-header">
+                            <tr>
+                                <td class="source"> 来源/用途</td>
+                                <td class="change">积分变化</td>
+                                <td class="time">日期</td>
+                            </tr>
+                        </thead>
+                        <tbody class="order-body" id="creidt_show">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="footer"></div>
+<script type="text/javascript">
+    var userName = "";
+    $(document).ready(function(){
+        $('#footer').load('footer.html');
+        $('#header').load('header.html');
+//        $('#center').load('center.html');
+        userName = $.cookie('userName');
+        setTimeout((function(){
+            if(userName && userName!=''){
+                $('.logina').hide();
+                $('.loginname').html(userName).show();
+                $('.exita').show();
+                if(userName == 'admin'){
+                    $('.managercenter').show();
+                }
+            }
+        }),100);
+        setTimeout((function() {
+            jQuery('.navUl li').removeClass('active');
+            jQuery('.navUl li:eq(4)').addClass('active');
+        }),100);
+        queryIntegral()
+    });
+    function changeOrder(str,obj){
+        jQuery('.order,.credits').removeClass('hide');
+        jQuery('.credits').addClass('hide');
+        jQuery('.my-info-left li').removeClass('active');
+        jQuery(obj).addClass('active');
+        var status = "";
+        if(str == 'all'){
+            //请求全部订单
+            status = "";
+        }else if(str == 'to'){
+            //代发货
+            status = "0";
+        }else if(str == 'confirm'){
+            //待确认
+            status = "1";
+        }else if(str == 'finish'){
+            //已完成
+            status = "2";
+        }
+        queryOrder(status);
+    }
+
+    function queryOrder(status){
+        $.ajax({
+            url: '/queryOrder',
+            data: {
+                userName : userName,
+                status : status
+            },
+            success(data){
+                if(data.err){
+                    alert('查询失败，'+data.msg);
+                }else{
+                    data = JSON.parse(data);
+
+                    var divhtm = "";
+                    if(data.rows.length > 0){
+                        for(var i = 0 ; i < data.rows.length ; i++){
+                            var da = data.rows[i];
+                            divhtm += "<div class='order_block'>";
+                            divhtm += "<table style='width: 100%'>";
+                            divhtm += "<thead class='order-header'>";
+                            divhtm += "<tr><td  class='time'>" + da.createTime + "</td>";
+                            divhtm += "<td class='ordernum'> 订单号: " + da.orderNo + "</td>";
+                            divhtm += "<td colspan='3' >";
+                            if(da.status == '1'){
+                                 divhtm += "<a href='javascript:;' onclick='confirmOrder(\"" + da.id + "\")'>确认收货</a>";
+                            }
+                            divhtm += "<a href='javascript:;' class='del' onclick='deleteOrder(\"" + da.id + "\")'></a>";
+                            divhtm += "</td>";
+                            divhtm += "</tr></thead>";
+                            divhtm += "<tbody class='order-body'>";
+                            var orders = da.goods;
+                            if(orders.length > 0){
+                                for(var j = 0 ; j < orders.length ; j++){
+                                    var order = orders[j];
+                                    divhtm += "<tr><td><img src='" + order.path + "' alt='' style='width:100px;height:100px;'></td>";
+                                    divhtm += "<td>" + order.name + "</td>";
+                                    divhtm += "<td class='price'>￥" + order.price + "</td>";
+                                    divhtm += "<td class='totalnum'>" + order.amount + "</td>";
+                                    if(j == 0){
+                                        divhtm += "<td rowspan='" + orders.length + "' class='total' style=''>￥" + da.totalPrice + "</td>"
+                                    }
+                                    divhtm += "</tr>";
+                                }
+                            }
+                            divhtm += "</tbody>";
+                            divhtm += "</table></div>";
+                        }
+
+                    }
+                    $("#order_show").html(divhtm);
+                }
+            },
+            error(){
+                alert('操作失败');
+            }
+        })
+    }
+
+    function changeCredits(str,obj){
+        jQuery('.order,.credits').removeClass('hide');
+        jQuery('.order').addClass('hide');
+        jQuery('.my-info-left li').removeClass('active');
+        jQuery(obj).addClass('active');
+        var status = '';
+        if(str == 'list'){
+            //请求积分明细
+            status = '';
+        }else if(str == 'pay'){
+            //请求积分支出
+            status = '1';
+        }
+        queryCredit(status);
+    }
+
+    function queryCredit(status){
+            $.ajax({
+                url: '/queryCredit',
+                data: {
+                    userName : userName,
+                    status : status
+                },
+                success(data){
+                    if(data.err){
+                        alert('查询失败，'+data.msg);
+                    }else{
+                        data = JSON.parse(data);
+                        var divhtm = "";
+                        if(data.rows.length > 0){
+                            for(var i = 0 ; i < data.rows.length ; i++){
+                                var da = data.rows[i];
+                                divhtm += "<tr><td>";
+                                 if(da.status == "0"){
+                                    divhtm += "购买商品获取，比例100:1";
+                                }else{
+                                    divhtm += "<div class='imgdiv'><img src='" + da.path + "' alt='' style='width:100px;height:100px;'></div>";
+                                     divhtm += "<div class='pdiv'>" + da.name + "</div>";
+                                }
+
+                                divhtm += "</td>";
+                                divhtm += "<td class='change'>";
+                                if(da.status == "0"){
+                                    divhtm += "+" + da.count;
+                                }else{
+                                     divhtm += "-" + da.count;
+                                }
+                                divhtm += "</td>";
+                                divhtm += "<td class='time'>" + da.createTime + "</td>";
+                                divhtm += "</tr>";
+                            }
+                        }
+                        $("#creidt_show").html(divhtm);
+                    }
+                },
+                error(){
+                    alert('操作失败');
+                }
+            })
+        }
+
+    function deleteOrder(id){
+        $.ajax({
+            url: '/deleteOrder',
+            data: {
+                id : id
+            },
+            success(data){
+                if(data.err){
+                    alert('删除失败，'+data.msg);
+                }else{
+                    alert('删除成功');
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('操作失败');
+            }
+        })
+    }
+
+    function queryIntegral(){
+        var userName = $.cookie('userName');
+        $.ajax({
+            url: '/queryIntegral',
+            data: {
+                userName : userName
+            },
+            success(data){
+                if(data.err){
+                }else{
+                    data = JSON.parse(data);
+                    if(data != '' && data != null && data[0].integral != '' && data[0].integral != null){
+                        $("#integral_show").text("剩余积分：" + data[0].integral);
+                    }
+                }
+            },
+            error(){
+                alert('操作失败');
+            }
+        })
+    }
+
+    function confirmOrder(id){
+        var userName = $.cookie('userName');
+        $.ajax({
+            url: '/confirmOrder',
+            data: {
+                id : id
+            },
+            success(data){
+                if(data.err){
+                    alert('查询失败，'+data.msg);
+                }else{
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('操作失败');
+            }
+        })
+    }
+</script>
+</body>
+</html>

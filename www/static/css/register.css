@@ -1,0 +1,42 @@
+.clearfix:after{
+    content: '';
+    display: block;
+    height: 0;
+    clear: both;
+    float: none;
+}
+.clearfix{
+    *zoom: 1;
+}
+ul{
+    margin: 0;
+    padding: 0;
+}
+li{
+    list-style: none;
+}
+body{
+    text-align: center;
+}
+.login{
+    width: 400px;
+    padding: 40px;
+    border: 1px solid #000;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 50px;
+    vertical-align: text-top;
+}
+.control-group{
+    height: 40px;
+    text-align: center;
+}
+.control-group>div{
+    float: left;
+}
+.clabel{
+    width: 62px;
+    text-align: justify;
+    text-align-last: justify;
+    margin-right: 20px;
+}

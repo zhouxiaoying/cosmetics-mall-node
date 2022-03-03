@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="slideBox" class="slideBox">
+    <div class="hd">
+        <ul><li>1</li><li>2</li><li>3</li></ul>
+    </div>
+    <div class="bd">
+        <ul>
+            <li><a href="javascript:;" target="_blank"><img src="static/images/1.jpg" /></a></li>
+            <li><a href="javascript:;" target="_blank"><img src="static/images/2.jpg" /></a></li>
+            <li><a href="javascript:;" target="_blank"><img src="static/images/3.jpg" /></a></li>
+            <li><a href="javascript:;" target="_blank"><img src="static/images/4.jpg" /></a></li>
+            <li><a href="javascript:;" target="_blank"><img src="static/images/5.jpg" /></a></li>
+        </ul>
+    </div>
+
+    <!-- 下面是前/后按钮代码，如果不需要删除即可 -->
+    <a class="prev" href="javascript:void(0)"></a>
+    <a class="next" href="javascript:void(0)"></a>
+
+</div>
+<div class="onsale">
+    <div class="onsaleHeader">
+        <h2>正在抢购的商品</h2>
+        <a href="javascript:;">查看更多</a>
+    </div>
+    <div class="onsaleBody">
+        <ul class="clearfix">
+            <li>
+                <a href="detail.html">
+                    <img src="static/images/porduct1.jpg" alt="">
+                </a>
+                <div class="productBottom">
+                    <div class="money">
+                        <strong>¥158</strong>
+                        <span>¥316</span>
+                    </div>
+                    <p>DHC橄榄卸妆油(M)</p>
+                </div>
+            </li>
+            <li>
+                <a href="detail.html">
+                    <img src="static/images/porduct2.jpg" alt="">
+                </a>
+                <div class="productBottom">
+                    <div class="money">
+                        <strong>¥158</strong>
+                        <span>¥316</span>
+                    </div>
+                    <p>DHC橄榄卸妆油(M)</p>
+                </div>
+            </li>
+            <li>
+                <a href="detail.html">
+                    <img src="static/images/porduct3.jpg" alt="">
+                </a>
+                <div class="productBottom">
+                    <div class="money">
+                        <strong>¥158</strong>
+                        <span>¥316</span>
+                    </div>
+                    <p>DHC橄榄卸妆油(M)</p>
+                </div>
+            </li> <li>
+            <a href="detail.html">
+                <img src="static/images/porduct4.jpg" alt="">
+            </a>
+            <div class="productBottom">
+                <div class="money">
+                    <strong>¥158</strong>
+                    <span>¥316</span>
+                </div>
+                <p>DHC橄榄卸妆油(M)</p>
+            </div>
+        </li> <li>
+            <a href="detail.html">
+                <img src="static/images/porduct5.jpg" alt="">
+            </a>
+            <div class="productBottom">
+                <div class="money">
+                    <strong>¥158</strong>
+                    <span>¥316</span>
+                </div>
+                <p>DHC橄榄卸妆油(M)</p>
+            </div>
+        </li>
+            <li>
+                <a href="detail.html">
+                    <img src="static/images/porduct6.jpg" alt="">
+                </a>
+                <div class="productBottom">
+                    <div class="money">
+                        <strong>¥158</strong>
+                        <span>¥316</span>
+                    </div>
+                    <p>DHC橄榄卸妆油(M)</p>
+                </div>
+            </li>
+
+
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" id="slide1">
+    setTimeout((function(){
+        jQuery(".slideBox").slide({mainCell:".bd ul",autoPlay:false});
+    }),500);
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>积分商城</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/datatables.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script src="static/js/datatables.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/layer/layer.min.js"></script>
+    <link rel="stylesheet" href="static/css/managerIndex.css">
+</head>
+<body>
+<div id="header">
+    <div class="navUl clearfix">
+        <ul class="clearfix">
+            <li><a href="/">前台首页</a></li>
+            <li><a href="managerIndex.html">用户管理</a></li>
+            <li><a href="managerType.html">商品分类管理</a></li>
+            <li><a href="managerProduct.html">商品管理</a></li>
+            <li><a href="managerCredit.html">积分商城</a></li>
+            <li class="active"><a href="managerRecommend.html">特价商城</a></li>
+            <li><a href="managerIndexProduct.html">首页推荐</a></li>
+            <li><a href="managerOrder.html">订单管理</a></li>
+            <li><a href="managerCreditDone.html">积分兑换管理</a></li>
+        </ul>
+    </div>
+</div>
+<div id="center">
+    <table class="footable table table-stripped toggle-arrow-tiny"
+           id="data_table">
+        <thead>
+        <tr align="left">
+            <th data-sort-ignore="true">商品名称</th>
+            <th data-sort-ignore="true">单价</th>
+            <th data-sort-ignore="true">分类</th>
+            <th data-sort-ignore="true">数量</th>
+            <th data-sort-ignore="true">操作</th>
+        </tr>
+        </thead>
+        <tbody id="data_tbody">
+        </tbody>
+    </table>
+</div>
+<iframe src="" id="hiddenIframe" name="hiddenIframe" frameborder="0"></iframe>
+<script type="text/javascript">
+    $(document).ready(function(){
+        init();
+    });
+
+    // 加载数据
+    function retrieveData(sSource, aoData, fnCallback) {
+        $.ajax({
+            "url": sSource,
+            "type": "get",
+            "success": function (data) {
+                var data1 = JSON.parse(data);
+                var length = $(data1).length;
+                var aoData = {
+                    sEcho: "test",
+                    aaData: data1,
+                    iTotalDisplayRecords: length,
+                    iTotalRecords: data.display
+                };
+                fnCallback(aoData);
+            }
+        });
+    }
+    //表字段说明
+    var columns = new Array(
+            {
+                "sClass": "text-center",
+                "mData": "name"
+            }, {
+                "sClass": "text-center",
+                "mData": "price"
+            }, {
+                "sClass": "text-center",
+                "mData": "typeName"
+            }, {
+                "sClass": "text-center",
+                "mData": "amount"
+            },{
+                "sClass": "text-center",
+                'mData': 'relationId',
+                "mRender": function (data, type, full) {
+                    return "<button class='btn-white btn btn-xs' onclick='delProduct(\""+data+"\")'>删除</button>";
+                }
+            });
+
+    function delProduct(id){
+        $.ajax({
+            url: '/deleteRecommendProduct',
+            data: {
+                id: id
+            },
+            success(data){
+                if(data.err){
+                    alert('错了，'+data.msg);
+                }else{
+                    alert('成功');
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('错了');
+            }
+        })
+    }
+
+    //初始化datatable
+    function init(){
+        $('#data_table').dataTable({
+            "bPaginate": true,
+            "bFilter": true,
+            "bProcessing": false,
+            "bLengthChange": false,
+            "serverSide": false,
+//				"bAutoWidth" : true,//是否自适应宽度
+            "stripeClasses": ["odd", "even"],
+            "aLengthMenu": [10, 20, 40], //更改显示记录数选项
+            "iDisplayLength": 10, //默认显示的记录数
+            "showNEntries" : false,
+            "bInfo" : false,
+            "sAjaxSource": "/recommendProduct",
+            "sPaginationType": "full_numbers",
+            "fnServerData": retrieveData,
+            "aoColumns": columns,
+            "oLanguage": { //汉化
+                "sLengthMenu": "每页显示 _MENU_ 条记录",
+                "sZeroRecords": "没有检索到数据",
+                "sInfo": "当前数据为从第 _START_ 到第 _END_ 条数据；总共有 _TOTAL_ 条记录",
+                "sInfoEmtpy": "没有数据",
+                "sProcessing": "正在加载数据...",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前页",
+                    "sNext": "后页",
+                    "sLast": "尾页"
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

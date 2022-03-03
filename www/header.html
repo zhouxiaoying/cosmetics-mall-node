@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="header">
+    <div class="right">
+        <a class="logina" href="javascript:;" onclick="gotologin()">登录/注册</a>
+        <a class="managercenter" href="javascript:;" style="display:none;" onclick="goManager()">管理中心</a>
+        <a href="mine.html"><span class="loginname" style="display:none;"></span></a>
+        <a class="exita" href="javascript:;" style="display:none;" onclick="goexit()">退出</a>
+    </div>
+</div>
+<div class="navUl clearfix">
+    <ul class="clearfix">
+        <li class="active"><a href="/">首页</a></li>
+        <li><a href="/allProducts">全部商品</a></li>
+        <li><a href="/changegifts">积分商城</a></li>
+        <li><a href="/brandstory">品牌故事</a></li>
+        <li class="mine_li"><a href="/mine" id="mine_a">我的</a></li>
+
+        <div class="nav-shop-car">
+            <a class="nav-car" href="javascript:;" onclick="gotocart()">
+                <input type="hidden" name="cartid" id="cartid" value="">
+                <span class="price-show">
+                    <i class="num-show">0</i>
+                    <strong class="totalprice">0</strong>
+                </span>
+            </a>
+        </div>
+    </ul>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var userName = $.cookie('userName');
+        if(userName != '' && userName != null && userName != 'null'){
+            $(".mine_li").show();
+            $("#mine_a").attr("href","/mine?userName=" + userName);
+        }else{
+            $(".mine_li").hide();
+        }
+    });
+    function gotologin(){
+       /* $('#slide1').html('');
+        $('#center').html('');
+        $('#center1').load('register.html');*/
+        window.open('register.html');
+    }
+    function goexit(){
+        $('.logina').show();
+        $('.loginname').html('').hide();
+        $('.exita').hide();
+        $('.managercenter').hide();
+        $.cookie('userName',null);
+        window.location.href = "/";
+    }
+    function goManager(){
+        window.location.href='managerIndex.html';
+    }
+    function gotocart(){
+        var cookieval = $.cookie('cart_cookie');
+        if(cookieval == '' || cookieval == null){
+            cookieval = "";
+        }
+        window.location.href='cart?val=' + cookieval;
+    }
+</script>
+</body>
+</html>

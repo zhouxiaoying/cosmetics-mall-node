@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>详情</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.SuperSlide.2.1.3.js"></script>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/detail.css">
+</head>
+<body >
+<div id="header"></div>
+
+<div class="detail">
+    <div class="detail-_header">
+        <img src="static/images/topBanner.jpg" alt="">
+    </div>
+    <% for(var i=0;i<rows.length;i++){ %>
+        <div class="detail_body clearfix">
+            <div class="left">
+                <img src="<%=rows[i].path%>" alt="">
+            </div>
+            <div class="right">
+                <div class="top">
+                    <div class="first">日本制</div>
+                    <div class="second"> <%=rows[i].name%></div>
+                    <div class="third">温和的植物性卸妆油！良好的卸妆力，有助于卸除彩妆和毛孔污垢</div>
+                </div>
+                <div class="brief"></div>
+                <div class="center">
+                    <div class="clearfix">
+                        <div class="tlabel">商品编号</div>
+                        <div class="tcontent">300</div>
+                    </div>
+                    <div class="clearfix">
+                        <div class="tlabel">商品价格</div>
+                        <div class="tcontent money">¥<%=rows[i].price%></div>
+                    </div>
+                    <div class="clearfix">
+                        <div class="tlabel">规格</div>
+                        <div class="tcontent">200ml</div>
+                    </div>
+                    <div class="clearfix">
+                        <div class="tlabel">数量</div>
+                        <div class="tcontent">
+                            <select name="num" id="num">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bottom_btn">
+                        <a href="javascript:;" onclick="addtocart('<%=rows[i].id%>','<%=rows[i].price%>');">放入购物车</a>
+                    </div>
+                </div>
+            </div>
+    </div>
+  <%}%>
+</div>
+<div id="footer"></div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#footer').load('footer.html');
+        $('#header').load('header.html');
+//        $('#center').load('center.html');
+        var userName = $.cookie('userName');
+        setTimeout((function(){
+            if(userName && userName!=''){
+                $('.logina').hide();
+                $('.loginname').html(userName).show();
+                $('.exita').show();
+                if(userName == 'admin'){
+                    $('.managercenter').show();
+                }
+            }
+        }),100);
+        setTimeout((function() {
+            jQuery('.navUl li').removeClass('active');
+            jQuery('.navUl li:eq(1)').addClass('active');
+        }),100);
+
+
+        setTimeout((function(){
+
+         var nums = $.cookie('total_num');
+                    var prices = $.cookie('total_price');
+                   if(nums != null){
+                        $('.num-show').text(nums);
+                        $('.totalprice').text(prices);
+                              }
+        }),500);
+    });
+    function addtocart(id,price){
+        //传商品id
+        //var ids = jQuery('#cartid').val()+id+',';
+        //jQuery('#cartid').val(ids);
+        var tempnum = $('#num').val();
+        var nums = parseInt($('.num-show').text(),10)+parseInt(tempnum,10);
+        $('.num-show').text(nums);
+        var prices = parseInt($('.totalprice').text(),10)+parseInt(price,10) * parseInt(tempnum,10);
+        $('.totalprice').text(prices);
+        var cookieval = $.cookie('cart_cookie');
+        if(cookieval != null){
+            cookieval =cookieval+ id+'-'+tempnum+','
+        }else{
+            cookieval =id+'-'+tempnum+','
+        }
+        $.cookie('cart_cookie',cookieval, { expires: 7 });
+        $.cookie('total_num',nums, { expires: 7 });
+        $.cookie('total_price',prices, { expires: 7 });
+    }
+</script>
+</body>
+</html>

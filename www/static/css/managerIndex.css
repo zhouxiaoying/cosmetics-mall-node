@@ -1,0 +1,115 @@
+.clearfix:after{
+    content: '';
+    display: block;
+    height: 0;
+    clear: both;
+    float: none;
+}
+.clearfix{
+    *zoom: 1;
+}
+ul{
+    margin: 0;
+    padding: 0;
+}
+li{
+    list-style: none;
+}
+.header{
+    height: 40px;
+    line-height: 40px;
+    background-color: #004098;
+}
+.header .right{
+    float: right;
+    margin-right: 100px;
+}
+.header .right a,
+.header .right span
+{
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 10px;
+    margin: 0 20px;
+}
+.navUl{
+    height: 80px;
+    text-align: center;
+    background-color: #004098;
+}
+.navUl ul{
+    margin: 0;
+    padding: 0;
+}
+.navUl ul li{
+    display: inline-block;
+    list-style: none;
+    height: 80px;
+    line-height: 80px;
+}
+.navUl ul li a{
+    display: block;
+    padding: 0 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+}
+.navUl ul li.active a{
+    color: red;
+}
+#center{
+    padding: 20px;
+}
+.text-left{
+    text-align: left;
+}
+.text-center{
+    text-align: center;
+}
+.searchDiv form{
+    padding-right: 100px;
+    position: relative;
+    text-align: center;
+}
+.search-block{
+    display: inline-block;
+    margin-right: 20px;
+}
+.search-block>div{
+    float: left;
+}
+#searchBtn{
+    position: absolute;
+    right: 0;
+}
+
+/**
+增加用户modal层中input框的样式
+*/
+.login{
+    width: 400px;
+    padding: 40px;
+    /*border: 1px solid #000;*/
+    /*border-radius: 8px;*/
+    display: inline-block;
+    vertical-align: text-top;
+}
+.control-group{
+    height: 40px;
+    text-align: center;
+}
+.control-group>div{
+    float: left;
+}
+.clabel{
+    width: 62px;
+    text-align: justify;
+    text-align-last: justify;
+    margin-right: 20px;
+}
+.modal-body{
+    text-align: center;
+}
+input[readonly]{
+    background-color: #eee;
+}

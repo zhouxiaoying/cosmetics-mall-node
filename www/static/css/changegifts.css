@@ -1,0 +1,72 @@
+body{
+    background-image: url("../images/bckg_tp.png");
+    background-repeat: repeat;
+}
+.changegifts{
+    width: 950px;
+    margin: 0 auto;
+}
+.gifts_header{
+    height: 115px;
+    background-image: url("../images/pointevent_r3_c2.png");
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.gifts_body {
+    background-color: #fff;
+    width: 940px;
+    margin: 0 auto;
+    padding:20px;
+}
+.gifts_block{
+    width: 261px;
+    height: 120px;
+    float: left;
+    margin: 0 18px;
+    margin-bottom: 60px;
+
+}
+.gifts_block .block_left,
+.gifts_block .block_right{
+    float: left;
+    width: 120px;
+}
+.gifts_block .block_left img{
+    width: 120px;
+    height: 120px;
+}
+.block_right{
+    padding: 6px 0;
+    margin-left: 20px;
+}
+.right_top{
+    color: #f64a93;
+    font-family: microsoft yahei;
+    font-size: 17px;
+    height: 30px;
+    line-height: 29px;
+    border-top: 1px solid red;
+    border-bottom: 1px solid red;
+    overflow: hidden;
+    text-overflow:ellipsis;
+}
+.right_center{
+    height: 40px;
+    overflow: hidden;
+}
+.right_center,
+.right_bottom{
+    margin-top: 5px;
+}
+.right_bottom a{
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    width: 120px;
+    text-align: center;
+    text-decoration: none;
+}
+.right_bottom.noactive a{
+    background-color: #eee;
+    color: #333;
+}

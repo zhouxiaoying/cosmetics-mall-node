@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商品管理</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/datatables.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script src="static/js/datatables.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/layer/layer.min.js"></script>
+    <link rel="stylesheet" href="static/css/managerIndex.css">
+</head>
+<body>
+<div id="header">
+    <div class="navUl clearfix">
+        <ul class="clearfix">
+            <li><a href="/">前台首页</a></li>
+            <li><a href="managerIndex.html">用户管理</a></li>
+            <li><a href="managerType.html">商品分类管理</a></li>
+            <li  class="active"><a href="managerProduct.html">商品管理</a></li>
+            <li><a href="managerCredit.html">积分商城</a></li>
+            <li><a href="managerRecommend.html">特价商城</a></li>
+            <li><a href="managerIndexProduct.html">首页推荐</a></li>
+            <li><a href="managerOrder.html">订单管理</a></li>
+            <li><a href="managerCreditDone.html">积分兑换管理</a></li>
+        </ul>
+    </div>
+</div>
+<div id="center">
+    <div class="searchDiv">
+
+    </div>
+    <div>
+        <button class="btn btn-success" onclick="addProduct()">增加商品</button>
+    </div>
+    <table class="footable table table-stripped toggle-arrow-tiny"
+           id="data_table">
+        <thead>
+        <tr align="left">
+            <th data-sort-ignore="true">商品名称</th>
+            <th data-sort-ignore="true">单价</th>
+            <th data-sort-ignore="true">分类</th>
+            <th data-sort-ignore="true">数量</th>
+            <th data-sort-ignore="true">简介</th>
+            <th data-sort-ignore="true">状态</th>
+            <th data-sort-ignore="true">操作</th>
+        </tr>
+        </thead>
+        <tbody id="data_tbody">
+        </tbody>
+    </table>
+</div>
+<!--增加用户的modal层--->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="addProductModal">
+    <div class="modal-dialog" role="document">
+        <div  class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">增加商品</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/addProduct" id="form1" method="post" enctype="multipart/form-data" target="hiddenIframe">
+                <div class="login">
+                    <div class="control-group clearfix">
+                        <div class="clabel">商品名称</div>
+                        <div><input type="text" name="name" id="name"></div>
+                    </div>
+                    <div class="control-group clearfix">
+                        <div class="clabel">单价</div>
+                        <div><input type="text" name="price" id="price"></div>
+                    </div>
+                    <div class="control-group clearfix">
+                        <div class="clabel">一级分类</div>
+                        <div>
+                            <select type="text" name="type" id="type" style="width:150px;" onchange="addSecondType(this)">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group clearfix">
+                        <div class="clabel">二级分类</div>
+                        <div>
+                            <select type="text" name="typeId" id="typeId" style="width:150px;">
+                                <option value="">请选择二级分类</option>
+                            </select>
+                        </div>
+                    </div>
+                        <div class="control-group clearfix">
+                            <div class="clabel">数量</div>
+                            <div><input type="text" name="amount" id="amount"></div>
+                        </div>
+                        <div class="control-group clearfix">
+                            <div class="clabel">简介</div>
+                            <div><input type="text" name="content" id="content"></div>
+                        </div>
+                        <div class="control-group clearfix">
+                            <div class="clabel">图片</div>
+                            <div>
+                                <input type="file" accept="image/*" name="path" id="path">
+                            </div>
+                        </div>
+                </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveAddProduct()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" id="alterProductModal">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑商品</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/toAlterProduct" id="form2" method="post" enctype="multipart/form-data" target="hiddenIframe">
+                    <input type="hidden" id="id" name="id" value="">
+                    <div class="login">
+                        <div class="control-group clearfix">
+                            <div class="clabel">商品名称</div>
+                            <div><input type="text" name="alter_name" id="alter_name"></div>
+                        </div>
+                        <div class="control-group clearfix">
+                            <div class="clabel">单价</div>
+                            <div><input type="text" name="alter_price" id="alter_price"></div>
+                        </div>
+
+                        <div class="control-group clearfix">
+                            <div class="clabel">一级分类</div>
+                            <div>
+                                <select type="text" name="alter_type" id="alter_type" style="width:150px;" onchange="addSecondTypeAlter(this)">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group clearfix">
+                            <div class="clabel">二级分类</div>
+                            <div>
+                                <select type="text" name="alter_typeId" id="alter_typeId" style="width:150px;">
+                                    <option value="">请选择二级分类</option>
+                                </select>
+                            </div>
+                        </div>
+
+                            <div class="control-group clearfix">
+                                <div class="clabel">数量</div>
+                                <div><input type="text" name="alter_amount" id="alter_amount"></div>
+                            </div>
+                            <div class="control-group clearfix">
+                                <div class="clabel">简介</div>
+                                <div><input type="text" name="alter_content" id="alter_content"></div>
+                            </div>
+                            <div class="control-group clearfix">
+                                <div class="clabel">图片</div>
+                                <div>
+                                    <input type="file" accept="image/*" name="path" id="path">
+                                <img src="" id="alter_img_show">
+                                <input type="button" value="删除" onclick="delFile()" id="alter_img_button">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveAlterProduct()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<input type="hidden" name="goodId" id="goodId">
+
+<div class="modal fade" tabindex="-1" role="dialog" id="addCreditModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">增加积分兑换产品</h4>
+            </div>
+            <div class="modal-body">
+                <div class="login" style="padding: 0px 40px;">
+                    <div class="control-group clearfix">
+                        <div class="clabel">商品限量</div>
+                        <div><input type="number" name="creditAmount" id="creditAmount"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="login" style="padding: 0px 40px;">
+                    <div class="control-group clearfix">
+                        <div class="clabel">积分数量</div>
+                        <div><input type="number" name="integralCount" id="integralCount"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="login" style="padding: 0px 40px;">
+                    <div class="control-group clearfix">
+                        <div class="clabel">描述</div>
+                        <div><input type="text" name="creditContent" id="creditContent"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveCredit()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="addRecommendModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">推荐首页宣传栏</h4>
+            </div>
+            <div class="modal-body">
+                <form action="/toIndexProduct" id="form3" method="post" enctype="multipart/form-data" target="hiddenIframe">
+                    <input type="hidden" id="indexGoodId" name="indexGoodId" value="">
+                    <div class="login">
+                        <div class="control-group clearfix">
+                            <div class="clabel">图片</div>
+                            <div>
+                                <input type="file" accept="image/*" name="path" id="path">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="saveIndexProduct()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<iframe src="" id="hiddenIframe" name="hiddenIframe" frameborder="0"></iframe>
+<script type="text/javascript">
+    $(document).ready(function(){
+        init();
+        queryFirstType();
+    });
+
+    // 首页推荐
+    function indexProduct(id){
+        $("#indexGoodId").val(id);
+        $('#addRecommendModal').modal('show');
+    }
+
+    // 修改物品
+    function saveIndexProduct(){
+        var form = new FormData(document.getElementById("form3"));
+        $.ajax({
+            url : $("#form3").attr("action"),
+            data : form,
+            type : "post",
+            processData : false,
+            contentType : false,
+            success : function(data) {
+                alert("添加成功");
+                $('#addRecommendModal').modal('hide');
+                window.location.reload();
+            },
+            error : function(data) {
+                alert("添加失败");
+            }
+        });
+    }
+
+
+    // 删除文件
+    function delFile(){
+        var filePath = $("#alter_img_show").attr("src");
+        var id = $("#id").val();
+        $.ajax({
+            "url": "deleteProFile",
+            "type": "get",
+            "data": {
+                id :  id,
+                filePath : filePath
+            },
+            "success": function (data) {
+                if(data.err){
+                }else{
+                    $("#alter_img_show").remove();
+                    $("#alter_img_button").remove();
+                }
+            }
+        });
+    }
+
+    // 修改物品
+    function saveAlterProduct(){
+        //首先验证
+        var flag = true;
+        flag = check1();
+        if(flag){
+            var form = new FormData(document.getElementById("form2"));
+            $.ajax({
+                url : $("#form2").attr("action"),
+                data : form,
+                type : "post",
+                processData : false,
+                contentType : false,
+                success : function(data) {
+                    alert("修改成功");
+                    $('#alterProductModal').modal('hide');
+                    window.location.reload();
+                },
+                error : function(data) {
+                    alert("修改失败");
+                }
+            });
+        }else{
+            alert("请确认您的信息");
+        }
+    }
+
+    // 加载数据
+    function queryFirstType() {
+        $.ajax({
+            "url": "type",
+            "type": "get",
+            //参数组合
+            "success": function (data) {
+                var data1 = JSON.parse(data);
+                var optionhtm = "<option value=''>请选择一级分类</option>";
+                for(var i = 0 ; i < data1.length ; i++){
+                    var da = data1[i];
+                    optionhtm += "<option value='" + da.id +"'>" + da.name + "</option>";
+                }
+                $("#type").html(optionhtm);
+                $("#alter_type").html(optionhtm);
+            }
+        });
+    }
+
+    function addSecondType(obj){
+        var parent_id = $(obj).val();
+        $.ajax({
+            "url": "type",
+            "type": "get",
+            //参数组合
+            "data": {
+                parent_id :  parent_id,
+                level : '2'
+            }, //以json格式传递
+            "success": function (data) {
+                var data1 = JSON.parse(data);
+                var optionhtm = "<option value=''>请选择二级分类</option>";
+                for(var i = 0 ; i < data1.length ; i++){
+                    var da = data1[i];
+                    optionhtm += "<option value='" + da.id +"'>" + da.name + "</option>";
+                }
+                $("#typeId").html(optionhtm);
+            }
+        });
+    }
+
+    function  addSecondTypeAlter(obj){
+        var parent_id = $(obj).val();
+        addSecondTypeAlterId(parent_id,"");
+    }
+
+    function addSecondTypeAlterId(parent_id,typeId){
+        $.ajax({
+            "url": "type",
+            "type": "get",
+            "async":"true",
+            //参数组合
+            "data": {
+                parent_id :  parent_id,
+                level : '2'
+            }, //以json格式传递
+            "success": function (data) {
+                var data1 = JSON.parse(data);
+                var optionhtm = "<option value=''>请选择二级分类</option>";
+                for(var i = 0 ; i < data1.length ; i++){
+                    var da = data1[i];
+                    if(typeId == da.id){
+                        optionhtm += "<option value='" + da.id +"' selected>" + da.name + "</option>";
+                    }else{
+                        optionhtm += "<option value='" + da.id +"'>" + da.name + "</option>";
+                    }
+                }
+                $("#alter_typeId").html(optionhtm);
+            }
+        });
+    }
+
+    // 加载数据
+    function retrieveData(sSource, aoData, fnCallback) {
+        $.ajax({
+            "url": sSource,
+            "type": "get",
+            "success": function (data) {
+                var data1 = JSON.parse(data);
+                var length = $(data1).length;
+                var aoData = {
+                    sEcho: "test",
+                    aaData: data1,
+                    iTotalDisplayRecords: length,
+                    iTotalRecords: data.display
+                };
+                fnCallback(aoData);
+            }
+        });
+    }
+    //表字段说明
+    var columns = new Array(
+            {
+                "sClass": "text-center",
+                "mData": "name"
+            }, {
+                "sClass": "text-center",
+                "mData": "price"
+            }, {
+                "sClass": "text-center",
+                "mData": "typeName"
+            }, {
+                "sClass": "text-center",
+                "mData": "amount"
+            }, {
+                "sClass": "text-center",
+                "mData": "content"
+            }, {
+                "sClass": "text-center",
+                "mData": "status",
+                "render": function (data) {
+                    if(data == 0){
+                        return "<span style='color:red'>未发布</span>";
+                    }else if(data == 1){
+                        return "<span style='color:green'>已发布</span>";
+                    }
+                }
+            }, {
+                "sClass": "text-center",
+                'mData': 'id',
+                "mRender": function (data, type, row,full) {
+                    var operStr = "<button class='btn-white btn btn-xs' onclick='alterProduct(\""+data+"\")'>编辑</button>";
+                    if(row.status == '0'){
+                        operStr += "&nbsp;&nbsp;<button class='btn-white btn btn-xs' onclick='publishProduct(\""+data+"\")'>发布</button>";
+                    }else{
+                        operStr += "&nbsp;&nbsp;<button class='btn-white btn btn-xs' onclick='unpublishProduct(\""+data+"\")'>取消发布</button>";
+                    }
+
+                    if(row.recommendCount == 0){
+                        operStr += "&nbsp;&nbsp;<br><button class='btn-white btn btn-xs' onclick='reommendProduct(\""+data+"\")'>特价</button>";
+                    }
+                    if(row.indexCount == 0){
+                        operStr += "&nbsp;&nbsp;<br><button class='btn-white btn btn-xs' onclick='indexProduct(\""+data+"\")'>推荐首页宣传栏</button>";
+                    }
+                    if(row.integralCount == 0){
+                        operStr += "&nbsp;&nbsp;<button class='btn-white btn btn-xs' onclick='creditProduct(\""+data+"\")'>积分兑换</button>";
+                    }
+                    operStr += "&nbsp;&nbsp;<button class='btn-white btn btn-xs' onclick='delProduct(\""+data+"\")'>删除</button>";
+                    return operStr;
+                }
+            });
+    function addProduct(){
+        $('#addProductModal').modal('show');
+    }
+    function saveAddProduct(){
+        //首先验证
+        var flag = true;
+        flag = check();
+        if(flag){
+            var form = new FormData(document.getElementById("form1"));
+            $.ajax({
+                url : $("#form1").attr("action"),
+                data : form,
+                type : "post",
+                processData : false,
+                contentType : false,
+                success : function(data) {
+                   alert("保存成功");
+                    $('#addProductModal').modal('hide');
+                    window.location.reload();
+                },
+                error : function(data) {
+                   alert("保存失败");
+                }
+            });
+        }else{
+            alert("请确认您的信息");
+        }
+    }
+    function check(){
+        var flag = true;
+        var name = $('#name').val();
+        if(name == ''){
+            alert("名称不能为空");
+            return false;
+        }
+        var price = $('#price').val();
+        if(price == ''){
+            alert("单价不能为空");
+            return false;
+        }
+        var type = $('#type').val();
+        if(type == ''){
+            alert("商品分类不能为空");
+            return false;
+        }
+        var childtype = $('#childtype').val();
+        if(childtype == ''){
+            alert("商品子分类不能为空");
+            return false;
+        }
+        var amount = $('#amount').val();
+        if(amount == ''){
+            alert("商品数量不能为空");
+            return false;
+        }
+        var content = $('#content').val();
+        if(content == ''){
+            alert("商品简介不能为空");
+            return false;
+        }
+        return flag;
+    }
+
+    function delProduct(id){
+        $.ajax({
+            url: '/deleteProduct',
+            data: {
+                id: id
+            },
+            success(data){
+                if(data.err){
+                    alert('错了，'+data.msg);
+                }else{
+                    alert('成功');
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('错了');
+            }
+        })
+    }
+
+    // 发布
+    function publishProduct(id){
+        $.ajax({
+            url: '/changeProductStatus',
+            data: {
+                id : id,
+                status : '1'
+            },
+            success(data){
+                if(data.err){
+                    alert('错了，'+data.msg);
+                }else{
+                    alert('成功');
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('错了');
+            }
+        })
+    }
+
+    // 取消发布
+    function unpublishProduct(id){
+        $.ajax({
+            url: '/changeProductStatus',
+            data: {
+                id : id,
+                status : '0'
+            },
+            success(data){
+                if(data.err){
+                    alert('错了，'+data.msg);
+                }else{
+                    alert('成功');
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('错了');
+            }
+        })
+    }
+    // 推荐特价商品
+    function reommendProduct(id){
+        $.ajax({
+            url: '/reommendProduct',
+            data: {
+                id : id
+            },
+            success(data){
+                if(data.err){
+                    alert('错了，'+data.msg);
+                }else{
+                    alert('成功');
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('错了');
+            }
+        })
+    }
+
+    // 推荐特价商品
+    function creditProduct(id){
+        $("#addCreditModal").modal('show');
+        $('#goodId').val(id);
+
+    }
+
+    function saveCredit(){
+        $.ajax({
+            url: '/saveCreditProduct',
+            data: {
+                goodId: $('#goodId').val(),
+                amount : $("#creditAmount").val(),
+                integralCount : $("#integralCount").val(),
+                content : $("#creditContent").val()
+            },
+            dataType: 'json',
+            success(data){
+                if(data.err){
+                    alert('错了，'+data.msg);
+                }else{
+                    alert('成功');
+                    window.location.reload();
+                }
+            },
+            error(){
+                alert('错了');
+            }
+        })
+    }
+
+    function alterProduct(id){
+        $('#id').val(id);
+        $('#alterProductModal').modal('show');
+        //首先向后台请求数据
+        var data1 = {};
+        $.ajax({
+            url: '/alterProduct',
+            data: {
+                id: id
+            },
+            success(data){
+                data = JSON.parse(data);
+                data1 = data;
+                //渲染数据
+                $('#alterProductModal #alter_name').val(data1[0].name);
+                $('#alterProductModal #alter_price').val(data1[0].price);
+                $('#alterProductModal #alter_amount').val(data1[0].amount);
+                $('#alterProductModal #alter_content').val(data1[0].content);
+                //$('#alterProductModal #alter_path').val(data1[0].path);
+                $("#alter_img_show").attr("src",data1[0].path);
+                /*if(data1[0].path != '' && data1[0].path != null){
+                    $("#alter_img_show").attr("src",data1[0].path);
+                }*/
+                $("#alter_type").val(data1[0].parent_id);
+
+                if(data1[0].path == '' || data1[0].path == null){
+                    $("#alter_img_button").hide();
+                }else{
+                    $("#alter_img_button").show();
+                }
+
+                // 选中二级分类
+                addSecondTypeAlterId(data1[0].parent_id,data1[0].typeId);
+            },
+            error(){
+                alert('错了');
+            }
+        })
+    }
+
+    function check1(){
+        var flag = true;
+        var alterName = $('#alter_name').val();
+        if(alterName == ''){
+            alert("商品名称不能为空");
+            return false;
+        }
+        var alterprice = $('#alter_price').val();
+        if(alterprice == ''){
+            alert("单价不能为空");
+            return false;
+        }
+        var altertype = $('#alter_type').val();
+        if(altertype == ''){
+            alert("商品分类不能为空");
+            return false;
+        }
+        var alterchildtype = $('#alter_childtype').val();
+        if(alterchildtype == ''){
+            alert("商品子分类不能为空");
+            return false;
+        }
+        var alteramount = $('#alter_amount').val();
+        if(alteramount == ''){
+            alert("商品数量不能为空");
+            return false;
+        }
+        var altercontent = $('#alter_content').val();
+        if(altercontent == ''){
+            alert("商品简介不能为空");
+            return false;
+        }
+        return flag;
+    }
+
+
+    //初始化datatable
+    function init(){
+        $('#data_table').dataTable({
+            "bPaginate": true,
+            "bFilter": true,
+            "bProcessing": false,
+            "bLengthChange": false,
+            "serverSide": false,
+//				"bAutoWidth" : true,//是否自适应宽度
+            "stripeClasses": ["odd", "even"],
+            "aLengthMenu": [10, 20, 40], //更改显示记录数选项
+            "iDisplayLength": 10, //默认显示的记录数
+            "showNEntries" : false,
+            "bInfo" : false,
+            "sAjaxSource": "/product",
+            "sPaginationType": "full_numbers",
+            "fnServerData": retrieveData,
+            "aoColumns": columns,
+            "oLanguage": { //汉化
+                "sLengthMenu": "每页显示 _MENU_ 条记录",
+                "sZeroRecords": "没有检索到数据",
+                "sInfo": "当前数据为从第 _START_ 到第 _END_ 条数据；总共有 _TOTAL_ 条记录",
+                "sInfoEmtpy": "没有数据",
+                "sProcessing": "正在加载数据...",
+                "oPaginate": {
+                    "sFirst": "首页",
+                    "sPrevious": "前页",
+                    "sNext": "后页",
+                    "sLast": "尾页"
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

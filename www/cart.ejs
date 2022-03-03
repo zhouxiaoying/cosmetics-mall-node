@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.SuperSlide.2.1.3.js"></script>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/cart.css">
+</head>
+<body >
+<div id="header"></div>
+<div class="cart_header">
+    <h2>购物车</h2>
+</div>
+<div class="cart">
+    <div class="tips">
+        <p>①单笔订购满188元，赠DHC防晒体验组</p>
+        <p>②单笔订购满588元，加赠价值90元的DHC男士磨砂洁面膏</p>
+        <p>③单笔订购满988元，再加赠价值198元的DHC清爽头皮护理润发乳</p>
+    </div>
+    <div class="product_header">
+        <ul class="clearfix">
+            <li style="width: 518px;">商品</li>
+            <li style="width: 201px;">单价</li>
+            <li style="width: 200px;">数量</li>
+        </ul>
+    </div>
+    <div class="shop-list clearfix">
+        <ul>
+         <% for(var i=0;i<rows.length;i++){ %>
+            <li class="clearfix" data-id="<%=rows[i].id%>">
+              <div class="product_img">
+                  <a href="detail?id=<%=rows[i].id%>">
+                      <img src="<%=rows[i].path%>" alt="">
+                      <p><%=rows[i].name%></p>
+                  </a>
+              </div>
+              <div class="pro-num-price js-price-box">
+                      <strong class="pro-red js-price-now"><%=rows[i].price%></strong>
+              </div>
+                  <div class="pro-num-box">
+                      <div class="pro-num-change-box">
+                          <img class="js-plus-btn" src="static/images/num_plus.png" onclick="goMinus(this)" alt="减少数量">
+                          <input type="hidden" id="" name="ttnum" value="<%=rows[i].num%>">
+                          <span class="js-num-box"><%=rows[i].num%></span>
+                          <img class="js-add-btn" src="static/images/num_add.png" onclick="goAdd(this)" alt="增加数量">
+                      </div>
+                  </div>
+                  <div class="collect-delete">
+                      <a class="into-delete" href="javascript:modCart(this,'<%=rows[i].id%>');" title="删除">删除</a>
+                  </div>
+            </li>
+             <%}%>
+        </ul>
+    </div>
+    <div class="product_header paybottom">
+           <span>已选商品<strong class="paynums"></strong>   件</span>
+           <span>合计<strong class="payprices"></strong>   元</span>
+           <a href="javascript:;" onclick="settlement()">结算</a>
+        </div>
+</div>
+
+<div id="footer"></div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#footer').load('footer.html');
+        $('#header').load('header.html');
+//        $('#center').load('center.html');
+        var userName = $.cookie('userName');
+        setTimeout((function(){
+            if(userName && userName!=''){
+                $('.logina').hide();
+                $('.loginname').html(userName).show();
+                $('.exita').show();
+                if(userName == 'admin'){
+                    $('.managercenter').show();
+                }
+            }
+        }),100);
+        setTimeout((function() {
+            jQuery('.navUl li').removeClass('active');
+            jQuery('.navUl li:eq(2)').addClass('active');
+        }),100);
+
+
+        setTimeout((function(){
+         var nums = $.cookie('total_num');
+                    var prices = $.cookie('total_price');
+                    if(nums != null){
+                          $('.num-show').text(nums);
+                          $('.totalprice').text(prices);
+                          $('.paynums').text(nums);
+                          $('.payprices').text(prices);
+
+                    }
+        }),500);
+    })
+
+    function modCart(obj,id){
+        $('.shop-list  li[data-id='+id+']').remove();
+        reCalNumAndPrice();
+    }
+
+    function goMinus(obj){
+        var tempnum = $(obj).parents('.pro-num-change-box').find('input[name="ttnum"]').val();
+        if(tempnum == 1){
+            alert("当前数量已为最少，如果想删除此商品，请点击删除按钮");
+        }else{
+            var ttnum = parseInt(tempnum,10)-1;
+            $(obj).parents('.pro-num-change-box').find('input[name="ttnum"]').val(ttnum);
+            $(obj).parents('.pro-num-change-box').find('.js-num-box').text(ttnum);
+            reCalNumAndPrice();
+        }
+    }
+
+    function goAdd(obj){
+            var tempnum = $(obj).parents('.pro-num-change-box').find('input[name="ttnum"]').val();
+                var ttnum = parseInt(tempnum,10)+1;
+                $(obj).parents('.pro-num-change-box').find('input[name="ttnum"]').val(ttnum);
+                $(obj).parents('.pro-num-change-box').find('.js-num-box').text(ttnum);
+                reCalNumAndPrice();
+        }
+
+
+
+
+    //重新结算购物车的数量和 总价钱
+    function reCalNumAndPrice(){
+        var nums = 0;
+        var prices = 0;
+        var cookieval = '';
+        $('.shop-list  li').each(function(index){
+            var tempnum = parseInt($(this).find('.js-num-box').text(),10);
+            var tempprice = parseInt($(this).find('.js-price-now').text(),10)*tempnum;
+            var id = $(this).attr('data-id');
+            nums+=tempnum;
+            prices+=tempprice;
+            cookieval+= id+'-'+tempnum+','
+        });
+
+       $.cookie('cart_cookie',cookieval, { expires: 7 });
+       $.cookie('total_num',nums, { expires: 7 });
+       $.cookie('total_price',prices, { expires: 7 });
+       $('.paynums').text(nums);
+       $('.payprices').text(prices);
+        $('.num-show').text(nums);
+        $('.totalprice').text(prices);
+    }
+    function settlement(){
+        //首先判断是否登录
+        if($('.loginname').text() == ''){
+            alert("请先登录");
+        }else{
+            var totalPrice = $('.payprices').text();
+            var orderStr = '';
+            var userName = $.cookie("userName");
+            $('.shop-list  li').each(function(){
+             var tempnum = parseInt($(this).find('.js-num-box').text(),10);
+             var tempprice = parseInt($(this).find('.js-price-now').text(),10)*tempnum;
+             var id = $(this).attr('data-id');
+             orderStr += id+'-'+tempprice+'-'+tempnum+',';
+            });
+            //先将订单信息保存到数据库
+              $.ajax({
+                    url: '/orderSave',
+                    data: {
+                        totalPrice:totalPrice,
+                        userName:userName,
+                        orderStr:orderStr
+                    },
+                    success(data){
+                        if(data.err){
+                            alert('失败，'+data.msg);
+                        }else{
+                            alert('成功');
+                             $.cookie('cart_cookie',null, { expires: 7 });
+                             $.cookie('total_num',null, { expires: 7 });
+                             $.cookie('total_price',null, { expires: 7 });
+                             $('.num-show').text("");
+                             $('.totalprice').text("");
+                            var userName = $.cookie("userName");
+                            window.location.href='/mine?userName='+userName;
+                        }
+                    },
+                    error(){
+                        alert('失败');
+                    }
+                })
+
+        }
+    }
+
+</script>
+</body>
+</html>

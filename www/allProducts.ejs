@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>全部商品</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/jquery.SuperSlide.2.1.3.js"></script>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/allproduct.css">
+</head>
+<body >
+<div id="header"></div>
+<div class="allproduct">
+    <div class="allproduct_header">
+        <div class="firstUl clearfix">
+            <div class="ul_title">一级</div>
+            <div class="ul_list">
+                <ul class="clearfix" id="first_type">
+                </ul>
+            </div>
+        </div>
+        <div class="secondUl clearfix">
+            <div class="ul_title">二级</div>
+            <div class="ul_list">
+                <ul class="clearfix" id="second_type">
+                    <li class="active"><a href="javascript:;">全部</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="allproduct_body clearfix" id="allproduct_body">
+         <% for(var i=0;i<rows.length;i++){ %>
+            <div class="product_block">
+                <a href="detail?id=<%=rows[i].id%>">
+                <div class="block_top">
+                    <img src="<%=rows[i].path%>" alt="">
+                </div>
+                <div class="block_center">
+                   <%=rows[i].name%>
+                </div>
+                <div class="block_bottom">
+                    ¥<%=rows[i].price%>
+                </div>
+                </a>
+            </div>
+         <%}%>
+    </div>
+</div>
+
+<div id="footer"></div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#footer').load('footer.html');
+        $('#header').load('header.html');
+//        $('#center').load('center.html');
+        var userName = $.cookie('userName');
+        setTimeout((function(){
+            if(userName && userName!=''){
+                $('.logina').hide();
+                $('.loginname').html(userName).show();
+                $('.exita').show();
+                if(userName == 'admin'){
+                    $('.managercenter').show();
+                }
+            }
+        }),100);
+        setTimeout((function() {
+            jQuery('.navUl li').removeClass('active');
+            jQuery('.navUl li:eq(1)').addClass('active');
+        }),100);
+
+     setTimeout((function(){
+        var nums = $.cookie('total_num');
+        var prices = $.cookie('total_price');
+        if(nums != null){
+             $('.num-show').text(nums);
+             $('.totalprice').text(prices);
+        }
+    }),500);
+    queryFirstGoodsType();
+})
+
+function queryFirstGoodsType(){
+    $.ajax({
+        url: '/type',
+        data: {},
+        success(data){
+            if(data.err){
+                alert('一级菜单获取失败，'+data.msg);
+            }else{
+               data = JSON.parse(data);
+               var optionHtm = "<li class='active'><a href='javascript:;' onclick='querySecondGoodsType(this)'>全部</a></li>";
+               for(var i = 0 ; i < data.length ; i++){
+                    optionHtm += "<li value='" + data[i].id + "'><a href='javascript:;' onclick='querySecondGoodsType(this)'>" + data[i].name + "</a></li>";
+               }
+               $("#first_type").html(optionHtm);
+            }
+        },
+        error(){
+            alert('操作失败');
+        }
+    })
+}
+
+function querySecondGoodsType(obj){
+    $("#first_type li").removeClass("active");
+    $(obj).parent().attr("class","active");
+    var parent_id = $(obj).parent().attr("value");
+    queryResource();
+    if(parent_id == '' || parent_id == null){
+        var optionHtm = "<li class='active'><a href='javascript:;'>全部</a></li>";
+        $("#second_type").html(optionHtm);
+        return;
+    }
+    $.ajax({
+        url: '/type',
+        data: {
+            parent_id : parent_id,
+            level : '2'
+        },
+        success(data){
+            if(data.err){
+                alert('二级菜单获取失败，'+data.msg);
+            }else{
+               data = JSON.parse(data);
+               var optionHtm = "<li class='active'><a href='javascript:;' onclick='queryGoodsType(this)'>全部</a></li>";
+               for(var i = 0 ; i < data.length ; i++){
+                    optionHtm += "<li value='" + data[i].id + "'><a href='javascript:;' onclick='queryGoodsType(this)'>" + data[i].name + "</a></li>";
+               }
+               $("#second_type").html(optionHtm);
+            }
+        },
+        error(){
+            alert('操作失败');
+        }
+    })
+}
+
+function queryGoodsType(obj){
+    $("#second_type li").removeClass("active");
+    $(obj).parent().attr("class","active");
+    queryResource();
+}
+
+function queryResource(){
+    var firstType = $("#first_type li[class='active']").attr("value");
+    var secondType = $("#second_type li[class='active']").attr("value");
+    if(firstType == '' || firstType == null){
+        secondType = "";
+    }
+    $.ajax({
+            url: '/product',
+            data: {
+                firstType : firstType,
+                secondType : secondType
+            },
+            success(data){
+                if(data.err){
+                    alert('商品信息查询失败，'+data.msg);
+                }else{
+                   data = JSON.parse(data);
+                   var datahtm = "";
+                   var da = null;
+                   for(var i = 0 ; i < data.length ; i++){
+                        da = data[i];
+                        datahtm += "<div class='product_block'>";
+                        datahtm += "<a href='detail?id=" + da.id + "'>";
+                        datahtm += "<div class='block_top'>";
+                        datahtm += "<img src='" + da.path + "' alt=''>";
+                        datahtm += "</div>";
+                        datahtm += "<div class='block_center'>" + da.name + "</div>";
+                        datahtm += "<div class='block_bottom'>¥" + da.price + "</div>";
+                        datahtm += "</a></div>";
+                   }
+                    $("#allproduct_body").html(datahtm);
+                }
+            },
+            error(){
+                alert('操作失败');
+            }
+        })
+}
+</script>
+</body>
+</html>
